@@ -1,0 +1,80 @@
+Geography,Area (km2),Veg area (km2),pm25 mcg/m3,city
+Bayside - Little Neck,13.4,7.37,8.3,NYC
+Bedford Stuyvesant - Crown Heights,14.5,3.625,8.9,NYC
+Bensonhurst - Bay Ridge,18,5.04,8.1,NYC
+Borough Park,6.5,1.56,8.4,NYC
+Canarsie - Flatlands,15.4,6.314,8.1,NYC
+Central Harlem - Morningside Heights,8.2,2.378,9.4,NYC
+Chelsea - Clinton,4.5,0.495,11.4,NYC
+Coney Island - Sheepshead Bay,24,5.52,7.7,NYC
+Crotona -Tremont,7.1,2.272,9.7,NYC
+Downtown - Heights - Slope,11,2.42,9.9,NYC
+East Flatbush - Flatbush,14.5,4.35,8.6,NYC
+East Harlem,3.9,1.209,9.5,NYC
+East New York,7.4,2.146,8.7,NYC
+Flushing - Clearview,11.1,4.218,8.4,NYC
+Fordham - Bronx Pk,7.6,3.04,9.1,NYC
+Fresh Meadows,6,2.76,8.2,NYC
+Gramercy Park - Murray Hill,4.5,0.585,11.7,NYC
+Greenpoint,4.4,0.616,10.5,NYC
+Greenwich Village - SoHo,6,0.78,10.6,NYC
+High Bridge - Morrisania,4.3,0.903,9.6,NYC
+Hunts Point - Mott Haven,5.3,0.954,9.6,NYC
+Jamaica,5.8,2.03,8.2,NYC
+Kingsbridge - Riverdale,7.4,4.662,9.2,NYC
+Long Island City - Astoria,9.4,1.692,9.8,NYC
+Lower Manhattan,5.3,1.272,10.5,NYC
+Northeast Bronx,10.6,3.816,9.1,NYC
+Pelham - Throgs Neck,9.2,4.232,8.9,NYC
+Port Richmond,5.5,2.255,8.3,NYC
+Ridgewood - Forest Hills,8.4,3.78,8.5,NYC
+Rockaways,57.5,21.275,7.2,NYC
+South Beach - Tottenville,13,7.67,7.3,NYC
+Southeast Queens,33,14.52,7.9,NYC
+Southwest Queens,35,10.15,8,NYC
+Stapleton - St. George,9.4,4.794,7.8,NYC
+Sunset Park,9.2,2.668,9.4,NYC
+Union Square - Lower East Side,4.7,1.175,10.1,NYC
+Upper East Side,7.6,1.672,10.2,NYC
+Upper West Side,6.6,1.914,9.8,NYC
+Washington Heights,7.1,2.485,9.4,NYC
+West Queens,32,7.68,9.2,NYC
+Williamsburg - Bushwick,14.7,2.646,9.6,NYC
+Willowbrook,11,6.71,8,NYC
+Dobong-gu,20.65,10.151,9,S
+Dongdaemun-gu,14.22,1.215,11,S
+Dongjak-gu,16.36,4.368,11,S
+Eunpyeong-gu,29.71,14.4,8,S
+Gangbuk-gu,23.6,14.495,7,S
+Gangdong-gu,24.59,3.406,7,S
+Gangnam-gu,39.5,7.794,11,S
+Gangseo-gu,41.45,4.518,10,S
+Geumcheon-gu,13.02,2.774,10,S
+Guro-gu,20.12,3.713,10,S
+Gwanak-gu,29.57,12.485,13,S
+Gwangjin-gu,17.06,3.46,9,S
+Jongno-gu,23.91,11.435,12,S
+Jung-gu,9.96,3.206,12,S
+Jungnang-gu,18.5,5.229,10,S
+Mapo-gu,23.85,4.569,12,S
+Nowon-gu,35.44,14.742,11,S
+Seocho-gu,46.97,15.072,15,S
+Seodaemun-gu,17.63,5.106,10,S
+Seongbuk-gu,24.58,8.527,12,S
+Seongdong-gu,16.82,3.084,12,S
+Songpa-gu,33.88,4.777,12,S
+Yangcheon-gu,17.41,3.05,10,S
+Yeongdeungpo-gu,24.55,3.003,14,S
+Yongsan-gu,21.87,1.774,12,S
+Charlottenburg-Wilmersdorf,64.72,3.44,16.59,B
+Friedrichshain-Kreuzberg,20.16,2.02,16.63,B
+Lichtenberg,52.29,5.38,15.74,B
+Marzahn-Hellersdorf,61.74,7.04,15.89,B
+Mitte,39.47,5.28,15.63,B
+Neukelln,44.93,3.61,16.03,B
+Pankow,103.01,5.5,14.96,B
+Reinickendorf,89.46,4.84,15.25,B
+Spandau,91.91,6.09,15.51,B
+Steglitz-Zehlendorf,102.5,4.55,16.56,B
+Tempelhof-Schoeneberg,53.09,2.42,15.96,B
+Treptow-Kopenick,168.42,3.58,15.82,B

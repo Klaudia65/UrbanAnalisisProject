@@ -35,6 +35,56 @@ The data was collected from various sources by myself, I had to process them and
 
 <!-->
 
+Notes: 
+vérifications de 2 manières différentes
+avec la librairie iforest(with 5%) et en faisant le calcul IQR same results
+, sur plus de deux variables
+j'ai decider de garder les outliers car cela ne correspond pas à une erreur mais à une valeur légitime (plus grande superficie comme Steglitz-Zehlendorf et Treptow-Kopenick), quand j'ai tester avec les pm/m3 les outliers n'étaient pas bien plus grand ou petits que les autres (différence <1)
+j'ai aussi décider de les garder car je n'ai pas beaucoup de valeurs 
+
+PCA
+L'axe des abscisses (PC1) correspond à la première composante principale, qui explique 54,73 % de la variance totale des données.
+L'axe des ordonnées (PC2) correspond à la deuxième composante principale, expliquant 33,08 % de la variance.
+Ensemble, ces deux composantes capturent environ 87,81 % de la variance totale (54,73 % + 33,08 %), ce qui est suffisant pour une bonne représentation des données dans un espace réduit à deux dimensions.
+
+Dispersion des points :
+
+    NYC (bleu foncé) : Les points sont assez regroupés près du centre. Cela indique une relative homogénéité des observations pour cette ville.
+    S (vert clair) : Les points sont dispersés sur la droite du graphe, formant un groupe bien distinct des autres villes.
+    B (orange) : Les points se trouvent entre NYC et S, mais forment un nuage plus dispersé.
+
+b. Séparation entre groupes :
+
+    Les contours montrent des différences dans la répartition des observations pour chaque ville. Cela suggère que les données contiennent des caractéristiques discriminantes permettant de séparer les villes.
+        S semble bien distinct de NYC et B, avec des points éloignés sur l'axe PC1.
+        NYC et B présentent un certain chevauchement, mais les contours indiquent qu'ils ont des distributions légèrement différentes.
+Clusters naturels :
+
+    Le graphe suggère qu’il existe des différences significatives entre les villes (NYC, S, et B), probablement en raison des caractéristiques initiales (pollution, densité végétale, etc.).
+    Les clusters peuvent être liés à des facteurs spécifiques qui distinguent ces villes, comme des différences géographiques, économiques ou environnementales.
+
+b. Potentiel d’un modèle supervisé :
+
+    Puisque les groupes semblent bien séparés (surtout S), cela indique qu’un modèle de classification supervisé (par ex. Random Forest ou SVM) pourrait bien distinguer les villes sur la base des caractéristiques initiales.
+
+c. Analyse exploratoire :
+
+    Le chevauchement entre NYC et B pourrait indiquer des similitudes dans les caractéristiques (par exemple, une pollution similaire ou une densité végétale comparable).
+    Le groupe S distinct pourrait refléter des caractéristiques uniques propres à cette ville (par ex., moins polluée, plus de végétation).
+
+
+ Explorer la séparation en clustering :
+
+    Tester des algorithmes de clustering (K-means, DBSCAN) pour valider si les clusters correspondent bien aux villes.
+
+c. Validation supervisée :
+
+    Si les villes sont utilisées comme classes, entraîner un modèle supervisé et évaluer sa précision sur ces données.
+
+
+
+
+
 Analyse Non Supervisée
 
     Clustering:

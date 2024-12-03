@@ -5,6 +5,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
 import numpy as np
 from sklearn.ensemble import IsolationForest
+from sklearn.preprocessing import OneHotEncoder
 
 def detect_outliers_iqr(data): # to see if a value is an outlier or not
     Q1 = np.percentile(data, 25, axis=0)
@@ -51,50 +52,23 @@ X_scaled = scaler.fit_transform(X)
 # Perform PCA
 pca = PCA(n_components=2)  # Reduce to 2 components for visualization
 X_pca = pca.fit_transform(X_scaled)
-explained_var = pca.explained_variance_ratio_
 
 # Add PCA components to the data
 data['PCA1'] = X_pca[:, 0]
 data['PCA2'] = X_pca[:, 1]
 
+encoder = OneHotEncoder()
+city_encoded = encoder.fit_transform(data[['city']]).toarray()
+encoded_df = pd.DataFrame(encoded_city, columns=encoder.get_feature_names_out())
+data = pd.concat([data, encoded_df], axis=1)
+data.drop('city', axis=1, inplace=True)
+
 # Visualize the PCA results
-plt.figure(figsize=(12, 8))
-sns.scatterplot(
-    x='PCA1',
-    y='PCA2',
-    data=data,
-    hue='city',
-    palette='viridis',  # Change palette to a more vibrant one
-    s=100,  # Increase point size
-    alpha=0.8  # Add transparency
-)
-for city in data['city'].unique():
-    sns.kdeplot(
-        data=data[data['city'] == city],
-        x='PCA1',
-        y='PCA2',
-        alpha=0.5,
-        linewidths=1.5
-    )
-
-""" #Annotation of the points
-for i in range(data.shape[0]):
-    plt.text(
-        x=data['PCA1'].iloc[i],
-        y=data['PCA2'].iloc[i],
-        s=str(i),  # Use index or a specific column
-        fontsize=8,
-        alpha=0.7
-    )
-"""
-
-
-plt.title(f'PCA of Dataset\n(Explained Variance: PC1 = {explained_var[0]:.2%}, PC2 = {explained_var[1]:.2%})', fontsize=16)
-plt.xlabel('Principal Component 1', fontsize=14)
-plt.ylabel('Principal Component 2', fontsize=14)
-plt.legend(title='City', fontsize=12, title_fontsize=14)
-plt.grid(True, linestyle='--', alpha=0.6)  # Add gridlines
-plt.tight_layout()
+plt.figure(figsize=(10, 7))
+sns.scatterplot(x='PCA1', y='PCA2', data=data, hue='city') 
+plt.title('PCA of Dataset')
+plt.xlabel('Principal Component 1')
+plt.ylabel('Principal Component 2')
 plt.show()
 
 # Explained variance

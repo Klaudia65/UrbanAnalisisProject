@@ -1,7 +1,5 @@
 # UrbanAnalisisProject
 
-# UrbanAnalisisProject
-
 ## Objectives
 - Analyze the relationship between these variables and potentially predict or classify certain neighborhood characteristics.
 - Understand the relationships between variables.
@@ -15,9 +13,12 @@
 - **Vegetation area (km²)**
 - **Fine particles pollution pm25 (mcg/m³)**
 
+#### Additional Note
+I intended to include the income variable to enrich the dataset further. However, due to time constraints and the unavailability of reliable data, this variable was not included.
+
 ### Description
 - **79 neighborhoods/roundabouts** in 3 different cities:
-  - **NYC**: 42
+  - **New York City**: 42
   - **Berlin**: 12
   - **Seoul**: 25
 
@@ -32,26 +33,79 @@ The data was collected from various sources by myself, I had to process them and
   - [Oasis Hub](https://oasishub.co/dataset/berlin-germany-district-level-environmental-database/resource/be1739c5-1c58-4199-be5a-ea6f15299cb5?inner_span=True)
   - [Berlin Environmental Data](https://www.berlin.de/sen/uvk/_assets/natur-gruen/stadtgruen/daten-und-fakten/ausw_14.pdf)
 
+## Outliers
+
+### Verification of Existing Outliers
+
+We used two methods to verify the presence of outliers in our dataset:
+
+1. **IQR Calculations**
+
+```python
+def detect_outliers_iqr(data): 
+    Q1 = np.percentile(data, 25, axis=0)
+    Q3 = np.percentile(data, 75, axis=0)
+    IQR = Q3 - Q1
+    lower_bound = Q1 - 1.5 * IQR
+    upper_bound = Q3 + 1.5 * IQR
+    return (data < lower_bound) | (data > upper_bound)
+```
+
+2. **Isolation Forest Library**
+
+```python
+def detect_outliers_iforest(dataset): 
+    # 5% of the data are outliers
+    clf = IsolationForest(contamination=0.05) 
+    clf.fit(dataset)
+    return clf.predict(dataset) == -1
+```
+
+### Results
+
+Both methods identified abnormal data, particularly concerning the area (km²). However, we decided to keep the outliers for the following reasons:
+- The outliers correspond to legitimate values, such as larger areas like Steglitz-Zehlendorf and Treptow-Köpenick.
+- When tested with pm25 (mcg/m³), the outliers were not significantly different from the other values (difference <1).
+- The dataset is relatively small, so removing outliers would result in a loss of valuable information.
+
+## Principal Component Analysis (PCA)
+
+PCA is an unsupervised machine learning algorithm used for exploratory data analysis, dimensionality reduction, and information compression.
+
+### Code Snippet
+
+```python
+from sklearn.decomposition import PCA
+
+pca = PCA(n_components=2)
+X_pca = pca.fit_transform(X_scaled)
+data['PCA1'] = X_pca[:, 0]
+data['PCA2'] = X_pca[:, 1]
+```
+
+![PCA Figure](img/pca_figure.jpg)
+
+### Interpretation
+
+- **PC1 (x-axis)**: Explains 54.73% of the total variance.
+- **PC2 (y-axis)**: Explains 33.08% of the total variance.
+- **Combined**: Together, they explain 87.81% of the total variance, which is sufficient for a good representation of the data in a reduced 2-dimensional space.
+
+### Analysis
+
+I've chosen a PCA with labels (cities) to combine an unsupervised exploratory approach with a supervised interpretation, facilitating the analysis of patterns and relationships in the data.
+
+#### Dispersion of Points
+
+- **NYC (dark blue)**: Points are fairly clustered near the center, indicating relative homogeneity of observations for this city. However, a few well-scattered points of the cloud can be seen.
+- **Berlin (light green)**: Points are scattered on the right of the graph, forming a distinct group from the other cities.
+- **Seoul (orange)**: Points lie between NYC and Berlin, forming a more dispersed cloud. Seoul's neighborhoods share overlapping characteristics with both NYC and Berlin, leading to a more dispersed cloud. This might indicate that Seoul has mixed traits or variability in its data.
+
+
+
 
 <!-->
 
-Notes: 
-vérifications de 2 manières différentes
-avec la librairie iforest(with 5%) et en faisant le calcul IQR same results
-, sur plus de deux variables
-j'ai decider de garder les outliers car cela ne correspond pas à une erreur mais à une valeur légitime (plus grande superficie comme Steglitz-Zehlendorf et Treptow-Kopenick), quand j'ai tester avec les pm/m3 les outliers n'étaient pas bien plus grand ou petits que les autres (différence <1)
-j'ai aussi décider de les garder car je n'ai pas beaucoup de valeurs 
-
-PCA
-L'axe des abscisses (PC1) correspond à la première composante principale, qui explique 54,73 % de la variance totale des données.
-L'axe des ordonnées (PC2) correspond à la deuxième composante principale, expliquant 33,08 % de la variance.
-Ensemble, ces deux composantes capturent environ 87,81 % de la variance totale (54,73 % + 33,08 %), ce qui est suffisant pour une bonne représentation des données dans un espace réduit à deux dimensions.
-
-Dispersion des points :
-
-    NYC (bleu foncé) : Les points sont assez regroupés près du centre. Cela indique une relative homogénéité des observations pour cette ville.
-    S (vert clair) : Les points sont dispersés sur la droite du graphe, formant un groupe bien distinct des autres villes.
-    B (orange) : Les points se trouvent entre NYC et S, mais forment un nuage plus dispersé.
 
 b. Séparation entre groupes :
 

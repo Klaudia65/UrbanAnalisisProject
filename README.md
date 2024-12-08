@@ -1,4 +1,4 @@
-# UrbanAnalisisProject
+# Machine Learning Project : Urban neiborhoods living environment comparison
 
 ## Objectives
 - Analyze the relationship between these variables and potentially predict or classify certain neighborhood characteristics.
@@ -12,6 +12,7 @@
 - **Total area (km²)**
 - **Vegetation area (km²)**
 - **Fine particles pollution pm25 (mcg/m³)**
+- **Vegetation density (data['Veg area (km2)'] / data['Area (km2)'])**
 
 #### Additional Note
 I intended to include the income variable to enrich the dataset further. However, due to time constraints and the unavailability of reliable data, this variable was not included.
@@ -37,7 +38,7 @@ The data was collected from various sources by myself, I had to process them and
 
 ### Verification of Existing Outliers
 
-We used two methods to verify the presence of outliers in our dataset:
+Two methods were used to verify the presence of outliers in our dataset:
 
 1. **IQR Calculations**
 
@@ -82,6 +83,9 @@ X_pca = pca.fit_transform(X_scaled)
 data['PCA1'] = X_pca[:, 0]
 data['PCA2'] = X_pca[:, 1]
 ```
+### Vizualization
+
+I've chosen a PCA with labels (cities) to combine an unsupervised exploratory approach with a supervised interpretation, facilitating the analysis of patterns and relationships in the data.
 
 ![PCA Figure](img/pca_figure.jpg)
 
@@ -91,40 +95,73 @@ data['PCA2'] = X_pca[:, 1]
 - **PC2 (y-axis)**: Explains 33.08% of the total variance.
 - **Combined**: Together, they explain 87.81% of the total variance, which is sufficient for a good representation of the data in a reduced 2-dimensional space.
 
-### Analysis
-
-I've chosen a PCA with labels (cities) to combine an unsupervised exploratory approach with a supervised interpretation, facilitating the analysis of patterns and relationships in the data.
-
 #### Dispersion of Points
 
 - **NYC (dark blue)**: Points are fairly clustered near the center, indicating relative homogeneity of observations for this city. However, a few well-scattered points of the cloud can be seen.
 - **Berlin (light green)**: Points are scattered on the right of the graph, forming a distinct group from the other cities.
-- **Seoul (orange)**: Points lie between NYC and Berlin, forming a more dispersed cloud. Seoul's neighborhoods share overlapping characteristics with both NYC and Berlin, leading to a more dispersed cloud. This might indicate that Seoul has mixed traits or variability in its data.
+- **Seoul (orange)**: Points lie between NYC and Berlin, forming a more dispersed cloud. Seoul's neighborhoods share overlapping characteristics with both NYC and Berlin, leading to a more dispersed cloud. This might indicate that Seoul has mixed traits or variability in the data.
+
+## Clustering Analysis
+
+### K-Means Clustering
+
+To determine the optimal number of clusters (k), we use two methods: the Elbow Method and the Silhouette Score.
+<p float="left">
+    <div style="width: 45%; display: inline-block; vertical-align: top;">
+        <h4>Elbow Method</h4>
+        <p>The Elbow Method helps to find the optimal k-value by plotting the inertia against the number of clusters. Inertia is calculated as:</p>
+        <p>Inertia = Σ (distance(x_i, c_j*))^2</p>
+        <p>where c_j is the centroid of the cluster. We look for the inflection point on the graph where the curve begins to "bend". This point generally corresponds to the optimal number of clusters. Here, the elbow is around K=4.</p>
+        <img src="img/elbow_method.jpg" width="350" alt="Elbow Method"/>
+    </div>
+    <div style="width: 45%; display: inline-block; vertical-align: top;">
+        <h4>Silhouette Score</h4>
+        <p>The Silhouette Score measures how similar a point is to its own cluster compared to other clusters. It is calculated as:</p>
+        <p>Silhouette Score = (b - a) / max(a, b)</p>
+        <p>where a is the average intra-cluster distance (the average distance between each point within a cluster) and b is the average inter-cluster distance (the average distance between all clusters). The highest score is 0.54 with K=4</p>
+        <img src="img/silhouette_coef.jpg" width="350" alt="silhouette coef"/>
+    </div>
+</p>
+
+K4-Means
+
+code snippet:
+
+optimal_clusters = 4 
+kmeans = KMeans(n_clusters=optimal_clusters, random_state=42)
+kmeans.fit(X_scaled)
+pca = PCA(n_components=2)
+X_pca = pca.fit_transform(X_scaled)
+centroids = pca.transform(kmeans.cluster_centers_)
+for i, centroid in enumerate(centroids):
+    plt.scatter(*centroid, color='red', marker='X', s=200, label=f'Centroid {i}')
+sns.scatterplot(x=X_pca[:, 0], y=X_pca[:, 1], hue=data['cluster'], palette='viridis', s=100, alpha=0.8)
 
 
+classic visualization of K-means clustering results after dimensionality reduction by Principal Component Analysis (PCA)
+
+Pour chaque cluster, calculez les moyennes, les écarts-types, les quartiles, etc. des variables initiales. Cela vous permettra d'identifier les caractéristiques qui différencient les clusters.
+
+
+
+![K-Means Figure](img/k_means2.jpg)
+
+Heatmap
+
+![K-Means Figure](img/heatmap.jpg)
+
+
+
+Surface et végétation: Il y a une corrélation positive modérée entre la surface d'un quartier et sa surface végétale. Cela suggère que les quartiers plus grands ont tendance à avoir une plus grande surface végétale.
+Pollution et végétation: La corrélation entre la pollution (pm25) et la densité de végétation est négative. Cela indique que les quartiers avec une densité de végétation plus élevée ont tendance à avoir une pollution de l'air moins élevée. C'est une observation intéressante et conforme à l'intuition.
+
+Pollution et surface: La corrélation entre la pollution et la surface est positive. Cela pourrait signifier que les quartiers plus grands ont tendance à être plus pollués. Cependant, il faudrait approfondir l'analyse pour confirmer cette hypothèse, car d'autres facteurs peuvent influencer la pollution.
+
+Densité de végétation et pollution: La corrélation négative entre la densité de végétation et la pollution confirme l'observation précédente : plus la densité de végétation est élevée, moins la pollution est importante.
 
 
 <!-->
 
-
-b. Séparation entre groupes :
-
-    Les contours montrent des différences dans la répartition des observations pour chaque ville. Cela suggère que les données contiennent des caractéristiques discriminantes permettant de séparer les villes.
-        S semble bien distinct de NYC et B, avec des points éloignés sur l'axe PC1.
-        NYC et B présentent un certain chevauchement, mais les contours indiquent qu'ils ont des distributions légèrement différentes.
-Clusters naturels :
-
-    Le graphe suggère qu’il existe des différences significatives entre les villes (NYC, S, et B), probablement en raison des caractéristiques initiales (pollution, densité végétale, etc.).
-    Les clusters peuvent être liés à des facteurs spécifiques qui distinguent ces villes, comme des différences géographiques, économiques ou environnementales.
-
-b. Potentiel d’un modèle supervisé :
-
-    Puisque les groupes semblent bien séparés (surtout S), cela indique qu’un modèle de classification supervisé (par ex. Random Forest ou SVM) pourrait bien distinguer les villes sur la base des caractéristiques initiales.
-
-c. Analyse exploratoire :
-
-    Le chevauchement entre NYC et B pourrait indiquer des similitudes dans les caractéristiques (par exemple, une pollution similaire ou une densité végétale comparable).
-    Le groupe S distinct pourrait refléter des caractéristiques uniques propres à cette ville (par ex., moins polluée, plus de végétation).
 
 
  Explorer la séparation en clustering :

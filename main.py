@@ -55,7 +55,7 @@ plt.ylabel('Silhouette Score')
 plt.show()
 
 # Perform KMeans clustering
-optimal_clusters = 4 
+optimal_clusters = 6 
 kmeans = KMeans(n_clusters=optimal_clusters, random_state=42)
 kmeans.fit(X_scaled)
 
@@ -71,7 +71,7 @@ for i in range(data.shape[0]):
     plt.text(
         x=data['PCA1'].iloc[i],
         y=data['PCA2'].iloc[i],
-        s=str(i),  # Use index or a specific column
+        s=data.index[i],  # Use index from the original DataFrame
         fontsize=8,
         alpha=0.7
     )
@@ -99,4 +99,15 @@ cluster_summary = data.groupby('cluster')[numeric_columns].mean()
 print("Cluster Summary:")
 print(cluster_summary)
 
-data.to_csv('clustered_data.csv', index=False)
+cluster_summary.to_csv('clustered_data.csv', index=False)
+
+# Number of neighborhoods in each cluster
+neighborhood_counts = data['cluster'].value_counts()
+print("Number of neighborhoods in each cluster:")
+print(neighborhood_counts)
+
+# I want to know how many cities are in each cluster for every city
+encoded_city_columns = encoder.get_feature_names_out(['city'])
+city_counts = pd.concat([data['cluster'], encoded_df], axis=1).groupby('cluster')[encoded_city_columns].sum()
+print("Number of cities in each cluster:")
+print(city_counts)

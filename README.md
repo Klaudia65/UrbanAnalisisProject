@@ -15,7 +15,7 @@
 - **Vegetation density (data['Veg area (km2)'] / data['Area (km2)'])**
 
 #### Additional Note
-I intended to include the income variable to enrich the dataset further. However, due to time constraints and the unavailability of reliable data, this variable was not included.
+I intended to include the population density or income variable to enrich the dataset further. However, due to time constraints and the unavailability of reliable data, these variables were not included.
 
 ### Description
 - **79 neighborhoods/roundabouts** in 3 different cities:
@@ -106,118 +106,150 @@ I've chosen a PCA with labels (cities) to combine an unsupervised exploratory ap
 ### K-Means Clustering
 
 To determine the optimal number of clusters (k), we use two methods: the Elbow Method and the Silhouette Score.
-<p float="left">
-    <div style="width: 45%; display: inline-block; vertical-align: top;">
-        <h4>Elbow Method</h4>
-        <p>The Elbow Method helps to find the optimal k-value by plotting the inertia against the number of clusters. Inertia is calculated as:</p>
-        <p>Inertia = Σ (distance(x_i, c_j*))^2</p>
-        <p>where c_j is the centroid of the cluster. We look for the inflection point on the graph where the curve begins to "bend". This point generally corresponds to the optimal number of clusters. Here, the elbow is around K=4.</p>
-        <img src="img/elbow_method.jpg" width="350" alt="Elbow Method"/>
-    </div>
-    <div style="width: 45%; display: inline-block; vertical-align: top;">
-        <h4>Silhouette Score</h4>
-        <p>The Silhouette Score measures how similar a point is to its own cluster compared to other clusters. It is calculated as:</p>
-        <p>Silhouette Score = (b - a) / max(a, b)</p>
-        <p>where a is the average intra-cluster distance (the average distance between each point within a cluster) and b is the average inter-cluster distance (the average distance between all clusters). The highest score is 0.54 with K=4</p>
-        <img src="img/silhouette_coef.jpg" width="350" alt="silhouette coef"/>
-    </div>
-</p>
+### Elbow Method
+The Elbow Method helps to find the optimal k-value by plotting the inertia against the number of clusters. Inertia is calculated as:
 
-K4-Means
+```
+Inertia = Σ (distance(x_i, c_j*))^2
+```
 
-code snippet:
+where c_j is the centroid of the cluster. We look for the inflection point on the graph where the curve begins to "bend". This point generally corresponds to the optimal number of clusters. Here, the elbow is around K=4.
+
+<img src="img/elbow_method.jpg" alt="Elbow Method" width="400">
+
+### Silhouette Score
+The Silhouette Score measures how similar a point is to its own cluster compared to other clusters. It is calculated as:
+
+```
+Silhouette Score = (b - a) / max(a, b)
+```
+
+where a is the average intra-cluster distance (the average distance between each point within a cluster) and b is the average inter-cluster distance (the average distance between all clusters). The highest score is 0.54 with K=4.
+
+<img src="img/silhouette_coef.jpg" alt="Silhouette Score" width="400">
+
+### K-Means Clustering
+
+#### Code Snippet
+
+```python
+from sklearn.cluster import KMeans
+from sklearn.decomposition import PCA
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 optimal_clusters = 4 
 kmeans = KMeans(n_clusters=optimal_clusters, random_state=42)
 kmeans.fit(X_scaled)
+
 pca = PCA(n_components=2)
 X_pca = pca.fit_transform(X_scaled)
 centroids = pca.transform(kmeans.cluster_centers_)
+
 for i, centroid in enumerate(centroids):
     plt.scatter(*centroid, color='red', marker='X', s=200, label=f'Centroid {i}')
+
 sns.scatterplot(x=X_pca[:, 0], y=X_pca[:, 1], hue=data['cluster'], palette='viridis', s=100, alpha=0.8)
+plt.title('K-Means Clustering Results after PCA')
+plt.xlabel('PCA1')
+plt.ylabel('PCA2')
+plt.legend()
+plt.show()
+```
 
+#### Visualization
 
-classic visualization of K-means clustering results after dimensionality reduction by Principal Component Analysis (PCA)
-
-Pour chaque cluster, calculez les moyennes, les écarts-types, les quartiles, etc. des variables initiales. Cela vous permettra d'identifier les caractéristiques qui différencient les clusters.
-
-
+The classic visualization of K-means clustering results after dimensionality reduction by Principal Component Analysis (PCA) is shown below:
 
 ![K-Means Figure](img/k_means2.jpg)
 
-Heatmap
+#### Cluster Characteristics
 
-![K-Means Figure](img/heatmap.jpg)
+| Cluster | Area (km²) | Veg Area (km²) | pm25 (mcg/m³) | Veg Density | City_B | City_NYC | City_S | PCA1 | PCA2 |
+|---------|-------------|----------------|---------------|-------------|--------|----------|--------|------|------|
+| 0       | 45.25       | 17.90          | 7.55          | 0.405       | 0.0    | 1.0      | 0.0    | -1.24| 1.29 |
+| 1       | 24.21       | 6.65           | 10.80         | 0.270       | 0.0    | 0.0      | 1.0    | 0.33 | 1.72 |
+| 2       | 10.24       | 3.30           | 9.14          | 0.318       | 0.0    | 1.0      | 0.0    | -1.28| -0.87|
+| 3       | 74.31       | 4.48           | 15.88         | 0.072       | 1.0    | 0.0      | 0.0    | 3.78 | -0.92|
 
+This table summarizes the characteristics of each cluster, providing insights into the average values of key variables for neighborhoods within each cluster.     
+```markdown
+### Cluster Distribution by City
 
+The table below shows the distribution of neighborhoods from each city across the identified clusters:
 
-Surface et végétation: Il y a une corrélation positive modérée entre la surface d'un quartier et sa surface végétale. Cela suggère que les quartiers plus grands ont tendance à avoir une plus grande surface végétale.
-Pollution et végétation: La corrélation entre la pollution (pm25) et la densité de végétation est négative. Cela indique que les quartiers avec une densité de végétation plus élevée ont tendance à avoir une pollution de l'air moins élevée. C'est une observation intéressante et conforme à l'intuition.
+| Cluster | Berlin | New York City | Seoul |
+|---------|--------|---------------|-------|
+| 0       | 0.0    | 2.0           | 0.0   |
+| 1       | 0.0    | 0.0           | 25.0  |
+| 2       | 0.0    | 40.0          | 0.0   |
+| 3       | 12.0   | 0.0           | 0.0   |
 
-Pollution et surface: La corrélation entre la pollution et la surface est positive. Cela pourrait signifier que les quartiers plus grands ont tendance à être plus pollués. Cependant, il faudrait approfondir l'analyse pour confirmer cette hypothèse, car d'autres facteurs peuvent influencer la pollution.
+As observed, the clusters are distinctly separated by cities. This separation may indicate differences in urban layout and planning, environmental factors, or variations in data collection methods across the cities.
+```
 
-Densité de végétation et pollution: La corrélation négative entre la densité de végétation et la pollution confirme l'observation précédente : plus la densité de végétation est élevée, moins la pollution est importante.
+## Heatmap Analysis
+
+### Code Snippet
+
+```python
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+numeric_features = data.select_dtypes(include=[float, int]).drop(columns=encoded_df.columns)
+# Plot heatmap
+plt.figure(figsize=(12, 8))
+sns.heatmap(numeric_features.corr(), annot=True, cmap='coolwarm')
+plt.title('Correlation Heatmap of Numeric Features')
+plt.show()
+```
+
+### Visualization
+![Heatmap](img/heatmap.jpg)
+
+### Surface Area
+There is a moderate positive correlation between the surface area of a neighborhood and its pm25 particle concentration. This suggests that larger neighborhoods tend to be more polluted.
+
+### Pollution and Vegetation
+The correlation between pollution (pm25) and vegetation density is negative. This indicates that neighborhoods with higher vegetation density tend to have lower air pollution. This is an interesting and intuitive observation.
+
+## Mean Squared Error (MSE) 
+
+#### Code Snippet
+```python
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+model = LinearRegression()
+model.fit(X_train, y_train)
+y_pred = model.predict(X_test)
+MSE = mean_squared_error(y_test, y_pred)
+```
+### Visualization
+
+![Regression Analysis](img/regression.jpg)
+![Regression Analysis](img/regression3.jpg)
+
+### Analysis
+
+The calculated Mean Squared Error (MSE) values are relatively high, indicating a significant variance between the predicted and actual values. This suggests that the linear regression model may not be adequately capturing the underlying patterns in the data. Additionally, MSE is highly sensitive to outliers, which can disproportionately affect the results.
+
+To improve the model's performance:
+- **Model Complexity**: The current linear model may be too simplistic. Exploring non-linear models could provide better results.
+- **Outlier Management**: Investigate and handle outliers appropriately to reduce their impact on the model's accuracy.
+
+By addressing these aspects, the predictive accuracy of the model can be enhanced, leading to more reliable insights.
+
 
 
 <!-->
 
 
 
- Explorer la séparation en clustering :
-
-    Tester des algorithmes de clustering (K-means, DBSCAN) pour valider si les clusters correspondent bien aux villes.
-
-c. Validation supervisée :
-
-    Si les villes sont utilisées comme classes, entraîner un modèle supervisé et évaluer sa précision sur ces données.
-
-
-
-
-
-Analyse Non Supervisée
-
-    Clustering:
-        Objectif: Regrouper les quartiers en fonction de leur similarité sur les variables.
-        Algorithmes: K-means, DBSCAN, Hierarchical Clustering.
-        Intérêt: Identifier des clusters de quartiers avec des caractéristiques environnementales similaires (par exemple, quartiers très verts avec une faible pollution, quartiers densément peuplés avec une forte pollution).
-    Analyse en Composantes Principales (ACP):
-        Objectif: Réduire la dimensionnalité des données et identifier les principales sources de variation.
-        Intérêt: Visualiser les quartiers dans un espace à plus faible dimension pour mieux comprendre leurs relations.
-
-Analyse Supervisée
-
-    Régression:
-        Objectif: Prédire la valeur de la pollution (pm2.5) en fonction de la superficie et de la surface végétalisée.
-        Algorithmes: Régression linéaire, Régression Ridge, Régression Lasso, Arbres de régression, Forêts aléatoires.
-        Intérêt: Comprendre l'impact de la superficie et de la surface végétalisée sur la qualité de l'air.
-    Classification:
-        Objectif: Classer les quartiers en fonction d'un critère (par exemple, quartiers à faible, moyenne ou forte pollution).
-        Algorithmes: Régression logistique, Arbres de décision, Forêts aléatoires, SVM.
-        Intérêt: Créer un modèle prédictif pour identifier les quartiers à risque en termes de pollution.
-
-Guidage dans vos Choix
-
-1. Définir votre objectif principal:
-
     Comprendre les relations: Si vous cherchez à comprendre les relations entre les variables, l'analyse en composantes principales et la régression linéaire sont de bons choix.
     Prédire la pollution: Pour prédire la pollution, la régression (linéaire, non-linéaire) est idéale.
     Identifier des groupes de quartiers: Le clustering vous permettra de regrouper les quartiers en fonction de leurs caractéristiques.
-
-2. Préparer vos données:
-
-    Nettoyage: Vérifier la présence de valeurs manquantes, d'outliers.
-    Normalisation: Normaliser les variables si nécessaire (par exemple, si les échelles sont très différentes).
-    Encodage: Si vous avez des variables catégorielles (par exemple, le nom de la ville), il faudra les encoder.
-
-3. Choisir les bons algorithmes:
-
-    Expérimenter: Tester différents algorithmes pour voir lequel donne les meilleurs résultats.
-    Évaluer les performances: Utiliser des métriques appropriées (RMSE, MAE, précision, rappel, F1-score).
-    Considérer la complexité: Pour les grands datasets, les algorithmes plus rapides (comme les arbres de décision ou les forêts aléatoires) peuvent être préférables.
-
-4. Interpréter les résultats:
-
-    Visualiser: Utiliser des graphiques pour mieux comprendre les résultats.
-    Valider: Valider les modèles sur un jeu de données de test.

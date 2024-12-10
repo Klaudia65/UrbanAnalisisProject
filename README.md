@@ -291,6 +291,7 @@ m.save("path.html")
 
 #### Note
 - The scales are not the same.
+- Few data are missing from NYC due to data compatibility (not the same names)
 - There might be an issue with the data, particularly with the Treptow-Köpenick district, which appears to have the highest vegetation. The data selected might correspond to public parks rather than the total vegetated area, potentially skewing the results.
 
 ### Additional Exploration

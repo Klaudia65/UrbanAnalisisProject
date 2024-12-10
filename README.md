@@ -1,11 +1,10 @@
 # Machine Learning Project : Urban neiborhoods living environment comparison
 
 ## Objectives
-- Analyze the relationship between these variables and potentially predict or classify certain neighborhood characteristics.
-- Identify predictive factors of pollution according to neighborhood characteristics.
-- Explore relationships between vegetation density and fine pollution in a variety of urban contexts.
-- Group neighborhoods according to similar characteristics to inform urban planning.
-
+- Analyze the relationship between various environmental variables and predict or classify neighborhood characteristics.
+- Identify predictive factors of pollution based on neighborhood characteristics.
+- Explore the relationship between vegetation density and fine particle pollution in urban contexts.
+- Group neighborhoods with similar characteristics to inform urban planning.
 
 ## Dataset
 
@@ -13,27 +12,26 @@
 - **Total area (km²)**
 - **Vegetation area (km²)**
 - **Fine particles pollution pm25 (mcg/m³)**
-- **Vegetation density (data['Veg area (km2)'] / data['Area (km2)'])**
+- **Vegetation density**: Calculated as `data['Veg area (km2)'] / data['Area (km2)']`
 
 #### Additional Note
-I intended to include the population density or income variable to enrich the dataset further. However, due to time constraints and the unavailability of reliable data, these variables were not included.
+Population density and income variables were considered but not included due to time constraints and data unavailability.
 
 ### Description
-- **79 neighborhoods/roundabouts** in 3 different cities:
-  - **New York City**: 42
-  - **Berlin**: 12
-  - **Seoul**: 25
+- **79 neighborhoods/roundabouts** across 3 cities:
+    - **New York City**: 42
+    - **Berlin**: 12
+    - **Seoul**: 25
 
-The data was collected from various sources by myself, I had to process them and put them in a single CSV file (`data/data.csv`).
+Data was collected from various sources and compiled into a single CSV file (`data/data.csv`).
 
 ### Data Sources
 - **Surface area**: [Wikipedia](https://www.wikipedia.org/)
-
 - **Seoul**: [Seoul Open Data Plaza](https://data.seoul.go.kr/dataService/boardList.do)
 - **New York City**: [NYC Health](https://a816-dohbesp.nyc.gov/IndicatorPublic/)
 - **Berlin**:
-  - [Oasis Hub](https://oasishub.co/dataset/berlin-germany-district-level-environmental-database/resource/be1739c5-1c58-4199-be5a-ea6f15299cb5?inner_span=True)
-  - [Berlin Environmental Data](https://www.berlin.de/sen/uvk/_assets/natur-gruen/stadtgruen/daten-und-fakten/ausw_14.pdf)
+    - [Oasis Hub](https://oasishub.co/dataset/berlin-germany-district-level-environmental-database/resource/be1739c5-1c58-4199-be5a-ea6f15299cb5?inner_span=True)
+    - [Berlin Environmental Data](https://www.berlin.de/sen/uvk/_assets/natur-gruen/stadtgruen/daten-und-fakten/ausw_14.pdf)
 
 ## Outliers
 
@@ -45,22 +43,21 @@ Two methods were used to verify the presence of outliers in our dataset:
 
 ```python
 def detect_outliers_iqr(data): 
-    Q1 = np.percentile(data, 25, axis=0)
-    Q3 = np.percentile(data, 75, axis=0)
-    IQR = Q3 - Q1
-    lower_bound = Q1 - 1.5 * IQR
-    upper_bound = Q3 + 1.5 * IQR
-    return (data < lower_bound) | (data > upper_bound)
+        Q1 = np.percentile(data, 25, axis=0)
+        Q3 = np.percentile(data, 75, axis=0)
+        IQR = Q3 - Q1
+        lower_bound = Q1 - 1.5 * IQR
+        upper_bound = Q3 + 1.5 * IQR
+        return (data < lower_bound) | (data > upper_bound)
 ```
 
 2. **Isolation Forest Library**
 
 ```python
 def detect_outliers_iforest(dataset): 
-    # 5% of the data are outliers
-    clf = IsolationForest(contamination=0.05) 
-    clf.fit(dataset)
-    return clf.predict(dataset) == -1
+        clf = IsolationForest(contamination=0.05) 
+        clf.fit(dataset)
+        return clf.predict(dataset) == -1
 ```
 
 ### Results
@@ -84,9 +81,10 @@ X_pca = pca.fit_transform(X_scaled)
 data['PCA1'] = X_pca[:, 0]
 data['PCA2'] = X_pca[:, 1]
 ```
-### Vizualization
 
-I've chosen a PCA with labels (cities) to combine an unsupervised exploratory approach with a supervised interpretation, facilitating the analysis of patterns and relationships in the data.
+### Visualization
+
+PCA with labels (cities) combines an unsupervised exploratory approach with a supervised interpretation, facilitating the analysis of patterns and relationships in the data.
 
 ![PCA Figure](img/pca_figure.jpg)
 
@@ -107,6 +105,7 @@ I've chosen a PCA with labels (cities) to combine an unsupervised exploratory ap
 ### K-Means Clustering
 
 To determine the optimal number of clusters (k), we use two methods: the Elbow Method and the Silhouette Score.
+
 ### Elbow Method
 The Elbow Method helps to find the optimal k-value by plotting the inertia against the number of clusters. Inertia is calculated as:
 
@@ -148,7 +147,7 @@ X_pca = pca.fit_transform(X_scaled)
 centroids = pca.transform(kmeans.cluster_centers_)
 
 for i, centroid in enumerate(centroids):
-    plt.scatter(*centroid, color='red', marker='X', s=200, label=f'Centroid {i}')
+        plt.scatter(*centroid, color='red', marker='X', s=200, label=f'Centroid {i}')
 
 sns.scatterplot(x=X_pca[:, 0], y=X_pca[:, 1], hue=data['cluster'], palette='viridis', s=100, alpha=0.8)
 plt.title('K-Means Clustering Results after PCA')
@@ -173,8 +172,8 @@ The classic visualization of K-means clustering results after dimensionality red
 | 2       | 10.24       | 3.30           | 9.14          | 0.318       | 0.0    | 1.0      | 0.0    | -1.28| -0.87|
 | 3       | 74.31       | 4.48           | 15.88         | 0.072       | 1.0    | 0.0      | 0.0    | 3.78 | -0.92|
 
-This table summarizes the characteristics of each cluster, providing insights into the average values of key variables for neighborhoods within each cluster.     
-```markdown
+This table summarizes the characteristics of each cluster, providing insights into the average values of key variables for neighborhoods within each cluster.
+
 ### Cluster Distribution by City
 
 The table below shows the distribution of neighborhoods from each city across the identified clusters:
@@ -187,7 +186,6 @@ The table below shows the distribution of neighborhoods from each city across th
 | 3       | 12.0   | 0.0           | 0.0   |
 
 As observed, the clusters are distinctly separated by cities. This separation may indicate differences in urban layout and planning, environmental factors, or variations in data collection methods across the cities.
-```
 
 ## Heatmap Analysis
 
@@ -245,30 +243,68 @@ To improve the model's performance:
 
 By addressing these aspects, the predictive accuracy of the model can be enhanced, leading to more reliable insights.
 
+## Spatial Data Visualization: Mapping
 
+### JSON Files for Districts
+- **Berlin**: [Berlin Neighborhoods GeoJSON](https://github.com/ljwolf/geopython/blob/master/data/berlin-neighbourhoods.geojson)
+- **Seoul**: [Seoul Districts GeoJSON](https://github.com/cubensys/Korea_District/blob/master/3_%EC%84%9C%EC%9A%B8%EC%8B%9C_%EC%9E%90%EC%B9%98%EA%B5%AC/%EC%84%9C%EC%9A%B8_%EC%9E%90%EC%B9%98%EA%B5%AC_%EA%B2%BD%EA%B3%84_2017.geojson)
+- **New York City**: [NYC UHF Districts GeoJSON](https://github.com/nychealth/coronavirus-data/blob/master/Geography-resources/UHF_resources/UHF42.geo.json)
 
-<!-->
+### Mapping with Folium
 
-JSON file
-berlin  
-    https://github.com/ljwolf/geopython/blob/master/data/berlin-neighbourhoods.geojson
+```python
+import pandas as pd
+import geopandas as gpd
+import folium
 
+# Load GeoJSON data
+geo_data = gpd.read_file("json/berlin-neighbourhoods.geojson")
+data = data[67:]
 
-A faire:
+# Add a column 'neighbourhood_group' to the DataFrame for merging
+data['neighbourhood_group'] = data['Geography'].str[:3]
+geo_data['neighbourhood_group'] = geo_data['neighbourhood_group'].str[:3]
 
-Spatialisation des données :
+# Unify the groups of neighborhoods (larger scale)
+grouped_geo_data = geo_data.dissolve(by='neighbourhood_group')
 
-    Cartographier les clusters pour visualiser leur répartition géographique (utiliser folium ou geopandas pour générer des cartes interactives).
-    Créer une matrice de distance entre les clusters pour observer la proximité des groupes en termes de caractéristiques environnementales.
+# Create a folium map
+m = folium.Map(location=[52.52, 13.405], zoom_start=10)
+folium.Choropleth(
+        geo_data=grouped_geo_data.to_json(),
+        data=data,
+        columns=['neighbourhood_group', 'pm25 mcg/m3'],
+        key_on='id',
+        fill_color='YlOrBr',
+        fill_opacity=0.7,
+        line_opacity=0.2,
+        legend_name='pm25 mcg/m3'
+).add_to(m)
 
-Prédiction avancée : Tester des algorithmes non linéaires (Random Forest, Gradient Boosting, ou SVM) pour améliorer les prédictions de pollution.
+m.save("path.html")
+```
 
-OPTIONEL:
-    PCA:
-        Visualiser les contributions des variables initiales aux axes principaux.
-        Comparer les résultats en gardant plus ou moins de dimensions (par exemple, 3 composantes principales au lieu de 2).
-    clustering:
-        Inclure une analyse des silhouettes pour chaque cluster (en termes de compacité et séparation).
-        visualisation pour la Comparaison des distributions de pollution entre les clusters.
-    MAE: (Mean Absolute Error) : Moins sensible aux outliers.
-    Tester des modèles non linéaires ou d’ensemble comme Random Forest Regressor ou XGBoost pour améliorer les prédictions.
+### Vegetation surface
+![vegetation area grouped](img/grouped_veg_area.jpg)
+### Pollution particles concentration
+![pm25 grouped](img/grouped_pm25.jpg)
+
+#### Note
+- The scales are not the same.
+- There might be an issue with the data, particularly with the Treptow-Köpenick district, which appears to have the highest vegetation. The data selected might correspond to public parks rather than the total vegetated area, potentially skewing the results.
+
+### Additional Exploration
+
+- **Interesting data**:
+    - Income Levels: To explore environmental inequalities (e.g., do wealthier neighborhoods have less pollution?).
+    - Proximity to Sources of Pollution: Distance of neighborhoods from industrial zones or major roads.
+
+- **Distance Matrix**: Create a distance matrix between clusters to observe the proximity of groups in terms of environmental characteristics.
+- **Non-Linear Algorithms**: Test algorithms like Random Forest, Gradient Boosting, or SVM to improve pollution predictions.
+- **PCA**:
+    - Visualize the contributions of initial variables to the principal axes.
+    - Compare results with more or fewer dimensions (e.g., 3 principal components instead of 2).
+- **Clustering**:
+    - Include a silhouette analysis for each cluster (in terms of compactness and separation).
+    - Visualization for comparing pollution distributions between clusters.
+- **MAE (Mean Absolute Error)**: Less sensitive to outliers.

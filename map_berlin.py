@@ -9,7 +9,7 @@ data = data.dropna()
 data['Veg density'] = data['Veg area (km2)'] / data['Area (km2)']
 data = data[67:]
 
-# Adding a colum 'neighbourhood_group' in the DataFrame to merge it with the GeoDataFrame
+# Adding a colum 'neighbourhood_group' in the DataFrame to merge it with the GeoDataFrame (name compatibility problems)
 data['neighbourhood_group'] = data['Geography'].str[:3]
 # Same name needed
 geo_data['neighbourhood_group'] = geo_data['neighbourhood_group'].str[:3]
@@ -22,12 +22,12 @@ m = folium.Map(location=[52.52, 13.405], zoom_start=10)
 folium.Choropleth(
     geo_data=grouped_geo_data.to_json(),
     data=data,
-    columns=['neighbourhood_group', 'Area (km2)'],
+    columns=['neighbourhood_group', 'pm25 mcg/m3'],
     key_on='id',
-    fill_color='YlGn',
+    fill_color='YlOrBr',
     fill_opacity=0.7,
     line_opacity=0.2,
-    legend_name='Area (km2)'
+    legend_name='pm25 mcg/m3'
 ).add_to(m)
 
-m.save("berlin_groups_map.html")
+m.save("html/berlin_groups_map.html")

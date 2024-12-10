@@ -2,9 +2,10 @@
 
 ## Objectives
 - Analyze the relationship between these variables and potentially predict or classify certain neighborhood characteristics.
-- Understand the relationships between variables.
-- Predict pollution.
-- Identify groups of neighborhoods.
+- Identify predictive factors of pollution according to neighborhood characteristics.
+- Explore relationships between vegetation density and fine pollution in a variety of urban contexts.
+- Group neighborhoods according to similar characteristics to inform urban planning.
+
 
 ## Dataset
 
@@ -248,8 +249,26 @@ By addressing these aspects, the predictive accuracy of the model can be enhance
 
 <!-->
 
+JSON file
+berlin  
+    https://github.com/ljwolf/geopython/blob/master/data/berlin-neighbourhoods.geojson
 
 
-    Comprendre les relations: Si vous cherchez à comprendre les relations entre les variables, l'analyse en composantes principales et la régression linéaire sont de bons choix.
-    Prédire la pollution: Pour prédire la pollution, la régression (linéaire, non-linéaire) est idéale.
-    Identifier des groupes de quartiers: Le clustering vous permettra de regrouper les quartiers en fonction de leurs caractéristiques.
+A faire:
+
+Spatialisation des données :
+
+    Cartographier les clusters pour visualiser leur répartition géographique (utiliser folium ou geopandas pour générer des cartes interactives).
+    Créer une matrice de distance entre les clusters pour observer la proximité des groupes en termes de caractéristiques environnementales.
+
+Prédiction avancée : Tester des algorithmes non linéaires (Random Forest, Gradient Boosting, ou SVM) pour améliorer les prédictions de pollution.
+
+OPTIONEL:
+    PCA:
+        Visualiser les contributions des variables initiales aux axes principaux.
+        Comparer les résultats en gardant plus ou moins de dimensions (par exemple, 3 composantes principales au lieu de 2).
+    clustering:
+        Inclure une analyse des silhouettes pour chaque cluster (en termes de compacité et séparation).
+        visualisation pour la Comparaison des distributions de pollution entre les clusters.
+    MAE: (Mean Absolute Error) : Moins sensible aux outliers.
+    Tester des modèles non linéaires ou d’ensemble comme Random Forest Regressor ou XGBoost pour améliorer les prédictions.
